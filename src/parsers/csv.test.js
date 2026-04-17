@@ -12,6 +12,14 @@ describe('parseCsvLine', () => {
   test('handles escaped quotes', () => {
     expect(parseCsvLine('"say ""hi""",ok')).toEqual(['say "hi"', 'ok']);
   });
+
+  test('handles empty fields', () => {
+    expect(parseCsvLine('a,,c')).toEqual(['a', '', 'c']);
+  });
+
+  test('handles single field', () => {
+    expect(parseCsvLine('hello')).toEqual(['hello']);
+  });
 });
 
 describe('parseCsv', () => {
@@ -55,5 +63,9 @@ describe('parseCsv', () => {
 
   test('returns empty array for header-only csv', () => {
     expect(parseCsv('url,title')).toEqual([]);
+  });
+
+  test('throws on empty string input', () => {
+    expect(() => parseCsv('')).toThrow();
   });
 });
