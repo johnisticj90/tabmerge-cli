@@ -23,6 +23,12 @@ test('buildManifest returns valid JSON with count', () => {
   expect(obj.createdAt).toBeDefined();
 });
 
+test('buildManifest with empty bookmarks returns count 0', () => {
+  const raw = buildManifest([], {});
+  const obj = JSON.parse(raw);
+  expect(obj.count).toBe(0);
+});
+
 test('collectEntries returns one entry per format plus manifest', () => {
   const entries = collectEntries(sample, ['json', 'csv']);
   expect(entries).toHaveLength(3);
@@ -34,6 +40,16 @@ test('collectEntries returns one entry per format plus manifest', () => {
 
 test('collectEntries throws on unsupported format', () => {
   expect(() => collectEntries(sample, ['xml'])).toThrow('Unsupported format');
+});
+
+test('collectEntries entries all have name and content fields', () => {
+  const entries = collectEntries(sample, ['json']);
+  for (const entry of entries) {
+    expect(entry).toHaveProperty('name');
+    expect(entry).toHaveProperty('content');
+    expect(typeof entry.name).toBe('string');
+    expect(typeof entry.content).toBe('string');
+  }
 });
 
 test('archiveToDir writes files to disk', () => {
