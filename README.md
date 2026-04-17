@@ -23,6 +23,7 @@ tabmerge merge bookmarks-chrome.html bookmarks-firefox.json -o merged.html
 | `-o, --output <file>` | Output file path (default: `stdout`) |
 | `-f, --format <type>` | Output format: `html`, `json`, `csv` (default: `html`) |
 | `--no-dedup` | Skip deduplication step |
+| `--dry-run` | Preview results without writing to disk |
 | `-v, --verbose` | Show merge summary |
 
 ### Supported Input Formats
@@ -40,6 +41,9 @@ tabmerge merge chrome.html firefox.json safari.plist -f json -o all-bookmarks.js
 
 # Preview without writing to disk
 tabmerge merge chrome.html firefox.json --dry-run
+
+# Merge and output as CSV
+tabmerge merge chrome.html firefox.json -f csv -o bookmarks.csv
 ```
 
 ## License
