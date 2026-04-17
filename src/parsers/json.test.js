@@ -10,7 +10,8 @@ const sampleExport = JSON.stringify({
           url: 'https://github.com',
           date_added: '13000000000000000',
         },
-        ',
+        {
+          type: 'folder',
           name: 'Dev',
           children: [
             {
