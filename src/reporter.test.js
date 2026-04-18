@@ -43,4 +43,13 @@ describe('report', () => {
     expect(stats.total).toBe(0);
     expect(stream.output).toContain('0');
   });
+
+  test('topDomains are sorted by count descending', () => {
+    const stream = makeStream();
+    const stats = report(bookmarks, { stream });
+    const counts = stats.topDomains.map(d => d.count);
+    for (let i = 1; i < counts.length; i++) {
+      expect(counts[i - 1]).toBeGreaterThanOrEqual(counts[i]);
+    }
+  });
 });
