@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { execSync } from 'child_process';
 import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
@@ -9,11 +9,9 @@ const NETSCAPE_FIXTURE = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <TITLE>Bookmarks</TITLE>
 <H1>Bookmarks</H1>
 <DL><p>
-<DT><A HREF="https://example.com" ADD_DATE="1000000">Example</A>
-<DT><A HREF="https://github.com" ADD_DATE="1700000001">GitHub</A>
-</DL><p>`;
+://example.com" ADD_DATE;
 
-function run() {
+function run(args) {
   return execSync(`node src/cli.js ${args}`, { encoding: 'utf-8' });
 }
 
@@ -63,5 +61,9 @@ describe('cli', () => {
     } finally {
       if (existsSync(outFile)) unlinkSync(outFile);
     }
+  });
+
+  it('exits with non-zero code when given a nonexistent file', () => {
+    expect(() => run('/nonexistent/path/file.html')).toThrow();
   });
 });
