@@ -46,12 +46,25 @@ function getFormatter(format) {
   }
 }
 
+function readInputFile(file) {
+  try {
+    return readFileSync(file, 'utf-8');
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.error(`Error: File not found: ${file}`);
+    } else {
+      console.error(`Error reading file ${file}: ${err.message}`);
+    }
+    process.exit(1);
+  }
+}
+
 function main() {
   const opts = parseArgs(args);
   if (opts.inputs.length === 0) { printHelp(); process.exit(1); }
 
   const collections = opts.inputs.map(file => {
-    const content = readFileSync(file, 'utf-8');
+    const content = readInputFile(file);
     return parse(content);
   });
 
