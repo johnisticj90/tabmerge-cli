@@ -10,9 +10,13 @@ const NETSCAPE_FIXTURE = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <H1>Bookmarks</H1>
 <DL><p>
 ://example.com" ADD_DATE;
-
-function run(args) {
-  return execSync(`node src/cli.js ${args}`, { encoding: 'utf-8' });
+ode src/cli.js ${argsfunction runWithExitCode(args) {
+   {
+    const stdoutSync(`node src/cli.js ${args}`, { encoding: 'utf-8' });
+    return { stdout, exitCode: 0 };
+  } catch (err) {
+    return { stdout: err.stdout, stderr: err.stderr, exitCode: err.status };
+  }
 }
 
 describe('cli', () => {
@@ -64,6 +68,7 @@ describe('cli', () => {
   });
 
   it('exits with non-zero code when given a nonexistent file', () => {
-    expect(() => run('/nonexistent/path/file.html')).toThrow();
+    const { exitCode } = runWithExitCode('/nonexistent/path/file.html');
+    expect(exitCode).toBeGreaterThan(0);
   });
 });
