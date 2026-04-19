@@ -13,6 +13,13 @@ function writeTmp(name, content) {
   return p;
 }
 
+/**
+ * Run the CLI with the given arguments and return stdout as a string.
+ */
+function runCLI(args, opts = {}) {
+  return execFileSync(process.execPath, [CLI, ...args], opts).toString();
+}
+
 const NETSCAPE = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <DL><p>
 <DT><A HREF="https://example.com" ADD_DATE="1700000000">Example</A>
@@ -23,7 +30,7 @@ const NETSCAPE = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 describe('deduplicator cli', () => {
   test('deduplicates bookmarks from a single file', () => {
     const f = writeTmp('dedup_input.html', NETSCAPE);
-    const out = execFileSync(process.execPath, [CLI, f]).toString();
+    const out = runCLI([f]);
     const matches = out.match(/HREF=/g) || [];
     expect(matches.length).toBe(2);
   });
@@ -31,14 +38,14 @@ describe('deduplicator cli', () => {
   test('merges and deduplicates across two files', () => {
     const f1 = writeTmp('dedup_a.html', NETSCAPE);
     const f2 = writeTmp('dedup_b.html', NETSCAPE);
-    const out = execFileSync(process.execPath, [CLI, f1, f2]).toString();
+    const out = runCLI([f1, f2]);
     const matches = out.match(/HREF=/g) || [];
     expect(matches.length).toBe(2);
   });
 
   test('outputs csv when --format csv', () => {
     const f = writeTmp('dedup_csv.html', NETSCAPE);
-    const out = execFileSync(process.execPath, [CLI, f, '--format', 'csv']).toString();
+    const out = runCLI([f, '--format', 'csv']);
     expect(out).toMatch(/url,title/);
     const lines = out.trim().split('\n');
     expect(lines.length).toBe(3); // header + 2 unique
@@ -47,7 +54,7 @@ describe('deduplicator cli', () => {
   test('writes to file with --out', () => {
     const f = writeTmp('dedup_out_in.html', NETSCAPE);
     const outPath = path.join(os.tmpdir(), 'dedup_result.html');
-    execFileSync(process.execPath, [CLI, f, '--out', outPath]);
+    runCLI([f, '--out', outPath]);
     const content = fs.readFileSync(outPath, 'utf8');
     expect(content).toMatch(/HREF=/);
   });
@@ -55,7 +62,7 @@ describe('deduplicator cli', () => {
   test('exits with error on unknown format', () => {
     const f = writeTmp('dedup_fmt.html', NETSCAPE);
     expect(() =>
-      execFileSync(process.execPath, [CLI, f, '--format', 'xml'], { stdio: 'pipe' })
+      runCLI([f, '--format', 'xml'], { stdio: 'pipe' })
     ).toThrow();
   });
 });
