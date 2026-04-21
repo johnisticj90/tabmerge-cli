@@ -40,6 +40,21 @@ function hasBookmark(collection, url) {
   return collection.bookmarks.some(b => b.url === url);
 }
 
+/**
+ * Returns a sorted copy of the collection's bookmarks.
+ * @param {object} collection - The collection to sort.
+ * @param {'title'|'url'|'createdAt'} field - The bookmark field to sort by.
+ * @returns {object} A new collection with bookmarks sorted by the given field.
+ */
+function sortCollection(collection, field = 'title') {
+  const sorted = [...collection.bookmarks].sort((a, b) => {
+    const av = a[field] ?? '';
+    const bv = b[field] ?? '';
+    return av < bv ? -1 : av > bv ? 1 : 0;
+  });
+  return { ...collection, bookmarks: sorted };
+}
+
 module.exports = {
   createCollection,
   addToCollection,
@@ -49,4 +64,5 @@ module.exports = {
   filterCollection,
   collectionSize,
   hasBookmark,
+  sortCollection,
 };
