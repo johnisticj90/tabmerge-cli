@@ -25,6 +25,10 @@ function extractBookmarks(node, bookmarks = []) {
  * @returns {Array<{title: string, url: string, addDate: number|null}>}
  */
 function parseJson(input) {
+  if (typeof input !== 'string' || input.trim() === '') {
+    throw new Error('Input must be a non-empty string');
+  }
+
   let data;
   try {
     data = JSON.parse(input);
@@ -34,6 +38,10 @@ function parseJson(input) {
 
   if (!data.roots) {
     throw new Error('Unrecognized JSON bookmark format: missing "roots" key');
+  }
+
+  if (typeof data.roots !== 'object' || Array.isArray(data.roots)) {
+    throw new Error('Unrecognized JSON bookmark format: "roots" must be an object');
   }
 
   const bookmarks = [];
