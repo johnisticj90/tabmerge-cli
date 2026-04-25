@@ -55,6 +55,14 @@ function buildRelationshipMap(bookmarks) {
   return map;
 }
 
+/**
+ * Returns all bookmarks that have a relationship pointing to the given URL.
+ * Useful for finding "incoming" relationships (e.g. who considers this a parent).
+ */
+function findIncomingRelationships(bookmarks, targetUrl, type) {
+  return bookmarks.filter(b => hasRelationship(b, type, targetUrl));
+}
+
 module.exports = {
   addRelationship,
   removeRelationship,
@@ -63,4 +71,5 @@ module.exports = {
   clearRelationships,
   findRelated,
   buildRelationshipMap,
+  findIncomingRelationships,
 };
