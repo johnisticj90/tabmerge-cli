@@ -6,8 +6,12 @@ function isValidPriority(p) {
   return LEVELS.includes(p);
 }
 
-function setPriority(bookmark, level) {
+function validatePriority(level) {
   if (!isValidPriority(level)) throw new Error(`Invalid priority: ${level}`);
+}
+
+function setPriority(bookmark, level) {
+  validatePriority(level);
   return { ...bookmark, priority: level };
 }
 
@@ -22,7 +26,7 @@ function getPriority(bookmark) {
 }
 
 function filterByPriority(bookmarks, level) {
-  if (!isValidPriority(level)) throw new Error(`Invalid priority: ${level}`);
+  validatePriority(level);
   return bookmarks.filter(b => getPriority(b) === level);
 }
 
@@ -45,6 +49,20 @@ function setPriorityAll(bookmarks, level) {
   return bookmarks.map(b => setPriority(b, level));
 }
 
+/**
+ * Returns a summary count of bookmarks grouped by priority level.
+ * @param {Array} bookmarks
+ * @returns {Object} e.g. { low: 2, normal: 5, high: 1, critical: 0 }
+ */
+function countByPriority(bookmarks) {
+  const counts = Object.fromEntries(LEVELS.map(l => [l, 0]));
+  for (const b of bookmarks) {
+    const p = getPriority(b);
+    if (p in counts) counts[p]++;
+  }
+  return counts;
+}
+
 module.exports = {
   LEVELS,
   isValidPriority,
@@ -55,4 +73,5 @@ module.exports = {
   filterAtLeast,
   sortByPriority,
   setPriorityAll,
+  countByPriority,
 };
